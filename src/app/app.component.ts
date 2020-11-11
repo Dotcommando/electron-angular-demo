@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { IpcRenderer } from 'electron';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,23 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'electron-angular-demo';
+  private ipc: IpcRenderer;
+  public title = 'Electron Angular Demo';
+
+  constructor() {
+    if ((window as any).require) {
+      try {
+        this.ipc = (window as any).require('electron').ipcRenderer;
+      } catch (e) {
+        throw e;
+      }
+    } else {
+      console.warn('App is not running inside Electron!');
+    }
+  }
+
+  openModal(): void {
+    console.log('Open a modal');
+    this.ipc.send('openModal');
+  }
 }
